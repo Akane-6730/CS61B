@@ -56,10 +56,13 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
      */
     @Override
     public T peek() {
+        if (isEmpty()) {
+            throw new RuntimeException();
+        }
         return rb[first];
     }
 
-    private class ArrayRingBufferIterator implements Iterator<T>{
+    private class ArrayRingBufferIterator implements Iterator<T> {
         private int ptr;
         private int num;
 
@@ -81,7 +84,6 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         }
     }
 
-    // TODO: When you get to part 5, implement the needed code to support iteration.
     @Override
     public Iterator<T> iterator() {
         return new ArrayRingBufferIterator();
