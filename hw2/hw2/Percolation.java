@@ -33,8 +33,6 @@ public class Percolation {
         openSitesCount = 0;
 
         for (int i = 0; i < N; i++) {
-            uf.union(getIndex(0, i), virtualTop);
-            uf.union(getIndex(N - 1, i), virtualBottom);
             ufBackwash.union(getIndex(0, i), virtualTop);
         }
     }
@@ -78,6 +76,13 @@ public class Percolation {
             grid[row][col] = true;
             openSitesCount++;
             connectedToNeighbors(row, col, getIndex(row, col));
+            if (row == 0) {
+                uf.union(getIndex(row, col), virtualTop);
+                ufBackwash.union(getIndex(row, col), virtualTop);
+            }
+            if (row == size - 1) {
+                uf.union(getIndex(row, col), virtualBottom);
+            }
         }
     }
 
