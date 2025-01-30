@@ -1,13 +1,14 @@
 package hw2;
 
-import edu.princeton.cs.introcs.*;
+import edu.princeton.cs.introcs.StdRandom;
+import edu.princeton.cs.introcs.StdStats;
 
 
 public class PercolationStats {
     private Percolation item;
     private int T;
     private double[] thresholds;
-    private static final double k = 1.96;
+    private static final double K = 1.96;
 
     private double sumOfThreshold;
 
@@ -24,7 +25,7 @@ public class PercolationStats {
             while (!item.percolates()) {
                 item.open(StdRandom.uniform(N), StdRandom.uniform(N));
             }
-            thresholds[i] = item.numberOfOpenSites() / (N * N);
+            thresholds[i] = 1.0 * item.numberOfOpenSites() / (N * N);
         }
     }
 
@@ -37,10 +38,10 @@ public class PercolationStats {
     }
 
     public double confidenceLow() {
-        return mean() - k * Math.sqrt(stddev() / T);
+        return mean() - K * Math.sqrt(stddev() / T);
     }
 
     public double confidenceHigh() {
-        return mean() + k * Math.sqrt(stddev() / T);
+        return mean() + K * Math.sqrt(stddev() / T);
     }
 }

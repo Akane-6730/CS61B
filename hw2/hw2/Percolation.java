@@ -105,4 +105,8 @@ public class Percolation {
     public boolean percolates() {
         return uf.connected(virtualTop, virtualBottom);
     }
+
+    public static void main(String[] args) {
+        // Test client (optional, can be used for debugging or unit testing)
+    }
 }
