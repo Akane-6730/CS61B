@@ -25,7 +25,7 @@ public class OomageTestUtility {
         double upperbound = N / 2.5;
 
         for (int count : buckets) {
-            if (count < lowerbound || count > upperbound){
+            if (count < lowerbound || count > upperbound) {
                 return false;
             }
         }
