@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- *  A hash table-backed Map implementation. Provides amortized constant time
- *  access to elements via get(), remove(), and put() in the best case.
+ * A hash table-backed Map implementation. Provides amortized constant time
+ * access to elements via get(), remove(), and put() in the best case.
  *
- *  @author Your name here
+ * @author Your name here
  */
 public class MyHashMap<K, V> implements Map61B<K, V> {
 
@@ -35,9 +35,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         }
     }
 
-    /** Computes the hash function of the given key. Consists of
-     *  computing the hashcode, followed by modding by the number of buckets.
-     *  To handle negative numbers properly, uses floorMod instead of %.
+    /**
+     * Computes the hash function of the given key. Consists of
+     * computing the hashcode, followed by modding by the number of buckets.
+     * To handle negative numbers properly, uses floorMod instead of %.
      */
     private int hash(K key) {
         if (key == null) {
@@ -53,22 +54,54 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        return buckets[hash(key)].get(key);
+    }
+
+    /**
+     * Resizes the internal array of buckets to the given capacity.
+     */
+    private void resize(int capacity) {
+        ArrayMap<K, V>[] oldBuckets = buckets;
+        buckets = new ArrayMap[capacity];
+        for (int i = 0; i < this.buckets.length; i += 1) {
+            this.buckets[i] = new ArrayMap<>();
+        }
+
+        for (ArrayMap<K, V> oldMap : oldBuckets) {
+            for (K key : oldMap.keySet()) {
+                V value = oldMap.get(key);
+                int newBucketIndex = hash(key);
+                buckets[newBucketIndex].put(key, value);
+            }
+        }
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (loadFactor() > MAX_LF) {
+            resize(buckets.length * 2);
+        }
+        int bucketIndex = hash(key);
+        // Accesses the pre-initialized bucket at this index; no new allocation happens here.
+        ArrayMap<K, V> bucket = buckets[bucketIndex];
+
+        // Note that size() here belongs to ArrayMap, not MyHashMap!
+        int preSize = bucket.size();
+        bucket.put(key, value);
+
+        if (bucket.size() > preSize) {
+            size++;
+        }
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
-    //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
+    /// ///////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
 
     /* Returns a Set view of the keys contained in this map. */
     @Override
