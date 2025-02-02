@@ -172,11 +172,16 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T removeMin() {
+        if (size == 0) {
+            throw new IllegalStateException("Heap is empty");
+        }
         T oldSmallest = peek();
-        contents[1] = null;
         swap(1, size);
-        sink(1);
+        contents[size] = null;
         size -= 1;
+        if (size > 0) {
+            sink(1);
+        }
         return oldSmallest;
     }
 
