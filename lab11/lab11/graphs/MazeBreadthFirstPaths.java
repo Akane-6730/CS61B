@@ -35,6 +35,14 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
         marked[s] = true;
         announce();
 
+        if (s == t) {
+            targetFound = true;
+        }
+
+        if (targetFound) {
+            return;
+        }
+
         while (!q.isEmpty()) {
             int oldHead = q.remove();
             for (int v : maze.adj(oldHead)) {
@@ -44,6 +52,9 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
                     edgeTo[v] = oldHead;
                     announce();
                     q.add(v);
+                    if (v == t) {
+                        return;
+                    }
                 }
             }
         }
