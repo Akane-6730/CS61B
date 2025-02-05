@@ -41,11 +41,10 @@ public class MazeCycles extends MazeExplorer {
             } else if (v != p) {
                 cycleFound = true;
                 edgeTo[v] = s;
-                announce();
                 for (int temp = s; temp != v; temp = parent[temp]) {
                     edgeTo[temp] = parent[temp];
-                    announce();
                 }
+                announce();
                 return;
             }
         }
