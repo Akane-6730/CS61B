@@ -76,11 +76,11 @@ public class MergeSort {
             return items;
         }
         int size = items.size();
-        Queue<Item> left = new Queue<>();
+        Queue<Item> tmp = new Queue<>();
         for (int i = 0; i < size / 2; i += 1) {
-            left.enqueue(items.dequeue());
+            tmp.enqueue(items.dequeue());
         }
-        Queue<Item> q1 = mergeSort(left);
+        Queue<Item> q1 = mergeSort(tmp);
         Queue<Item> q2 = mergeSort(items);
         items = mergeSortedQueues(q1, q2);
         return items;
