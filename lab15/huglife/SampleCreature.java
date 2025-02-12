@@ -88,6 +88,17 @@ public class SampleCreature extends Creature {
      */
     public Action chooseAction(Map<Direction, Occupant> neighbors) {
         List<Direction> empties = getNeighborsOfType(neighbors, "empty");
+//        List<Direction> impassibles = getNeighborsOfType(neighbors, "impassible");
+//
+//        // have the SampleCreature react in some observable way when it sees a wall
+//        if (!impassibles.isEmpty()) {
+//            g += HugLifeUtils.randomInt(-5 * colorShift, 5 * colorShift);
+//            b += HugLifeUtils.randomInt(-5 * colorShift, 5 * colorShift);
+//            g = Math.min(g, 255);
+//            g = Math.max(g, 0);
+//            b = Math.min(b, 255);
+//            b = Math.max(b, 0);
+//        }
         if (empties.size() == 1) {
             Direction moveDir = empties.get(0);
             return new Action(Action.ActionType.MOVE, moveDir);
