@@ -69,7 +69,7 @@ public class BinaryTrie implements Serializable {
             sequence = sequence.appended(b);
             if (b == 0) {
                 current = current.left;
-            } else if (b == 1){
+            } else if (b == 1) {
                 current = current.right;
             }
             i += 1;
@@ -91,7 +91,11 @@ public class BinaryTrie implements Serializable {
     }
 
     /* Pre-order traversal helper to build the lookup table. */
-    private void buildTableHelper(Map<Character, BitSequence> lookupTable, Node node, BitSequence path) {
+    private void buildTableHelper(
+            Map<Character, BitSequence> lookupTable,
+            Node node,
+            BitSequence path
+    ) {
         // Base case: Reached a null child, backtrack
         if (node == null) {
             return;
