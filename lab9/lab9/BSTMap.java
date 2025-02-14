@@ -1,5 +1,6 @@
 package lab9;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -109,7 +110,19 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> keySet = new HashSet<>();
+        traversal(keySet, root);
+        return keySet;
+    }
+
+    /* Performs an in-order traversal of the BST, adding keys to the set in ascending order. */
+    private void traversal(Set<K> keySet, Node node) {
+        if (node == null) {
+            return;
+        }
+        traversal(keySet, node.left);
+        keySet.add(node.key);
+        traversal(keySet, node.right);
     }
 
     /**
@@ -119,7 +132,64 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        // find the target node and its parent
+        Node current = root;
+        Node parent = null;
+
+        while (current != null) {
+            int cmp = key.compareTo(current.key);
+            if (cmp == 0) {
+                break;
+            }
+            parent = current;
+            current = (cmp < 0) ? current.left : current.right;
+        }
+
+        // Key not found in the tree
+        if (current == null) {
+            return null;
+        }
+
+        // record the value to be removed
+        V removedValue = current.value;
+
+        // remove the target node
+
+        // Case 1: Node has zero or one child
+        if (current.left == null || current.right == null) {
+            Node child = (current.left != null) ? current.left : current.right;
+            // Update root if target is root
+            if (parent == null) {
+                root = child; // Directly replace root
+            } else if (parent.left == current) {
+                parent.left = child; // Update parent's left
+            } else {
+                parent.right = child; // Update parent's right
+            }
+        } else { // Case 2: Node has two children
+            // Find the in-order successor (min node in right subtree)
+            Node minNode = current.right;
+            Node minParent = current;
+            while (minNode.left != null) {
+                minParent = minNode;
+                minNode = minNode.left;
+            }
+
+            // Copy successor's key and value to current node
+            current.key = minNode.key;
+            current.value = minNode.value;
+
+            // Remove the successor
+            if (minParent == current) {
+                minParent.right = minNode.right; // Handle if minNode is direct right child!
+            } else {
+                minParent.left = minNode.right; // Link minParent to minNode's right subtree
+            }
+        }
+
+        // adjust the size and return the value
+        size -= 1;
+        return removedValue;
     }
 
     /**
@@ -129,11 +199,16 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      **/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        V currentValue = get(key);
+        if (currentValue != null && currentValue.equals(value)) {
+            return remove(key);
+        }
+        return null;
     }
+
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return keySet().iterator();
     }
 }
