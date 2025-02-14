@@ -3,20 +3,16 @@ import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
     private Picture picture;
-    private int width;
-    private int height;
     private double[][] energyMatrix;
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
         this.picture = new Picture(picture);
-        width = picture.width();
-        height = picture.height();
 
         // compute energy matrix
-        energyMatrix = new double[width][height];
-        for (int i = 0; i < width; i += 1) {
-            for (int j = 0; j < height; j += 1) {
+        energyMatrix = new double[width()][height()];
+        for (int i = 0; i < width(); i += 1) {
+            for (int j = 0; j < height(); j += 1) {
                 energyMatrix[i][j] = computeEnergy(i, j);
             }
         }
@@ -29,24 +25,28 @@ public class SeamCarver {
 
     // width of current picture
     public int width() {
-        return width;
+        return picture.width();
     }
 
     // height of current picture
     public int height() {
-        return height;
+        return picture.height();
     }
 
+    // helper function to calculate energy differences (dx and dy squared)
     private int energyHelper(int dr, int dg, int db) {
         return dr * dr + dg * dg + db * db;
     }
 
     // compute energy of pixel at column x and row y
     private double computeEnergy(int x, int y) {
-        Color left = picture.get((x - 1 + width) % width, y);
-        Color right = picture.get((x + 1) % width, y);
-        Color up = picture.get(x, (y - 1 + height) % height);
-        Color down = picture.get(x, (y + 1) % height);
+        int w = width();
+        int h = height();
+        // handle wraparound
+        Color left = picture.get((x - 1 + w) % w, y);
+        Color right = picture.get((x + 1) % w, y);
+        Color up = picture.get(x, (y - 1 + h) % h);
+        Color down = picture.get(x, (y + 1) % h);
         int dx = energyHelper(left.getRed() - right.getRed(),
                 left.getGreen() - right.getGreen(),
                 left.getBlue() - right.getBlue());
@@ -77,11 +77,11 @@ public class SeamCarver {
     private int[] findSeam(boolean isVertical) {
         int w, h;
         if (isVertical) {
-            w = width;
-            h = height;
+            w = width();
+            h = height();
         } else {
-            w = height;
-            h = width;
+            w = height();
+            h = width();
         }
 
         // M(i,j) - cost of minimum cost path ending at (i, j)
@@ -138,16 +138,33 @@ public class SeamCarver {
 
     // remove horizontal seam from picture
     public void removeHorizontalSeam(int[] seam) {
-        validateSeam(seam, width);
-        picture = SeamRemover.removeHorizontalSeam(picture, findHorizontalSeam());
+        validateSeam(seam, width());
+        picture = SeamRemover.removeHorizontalSeam(picture, seam);
+        updateAfterSeamRemoval();
     }
 
     // remove vertical seam from picture
     public void removeVerticalSeam(int[] seam) {
-        validateSeam(seam, height);
-        picture = SeamRemover.removeVerticalSeam(picture, findVerticalSeam());
+        validateSeam(seam, height());
+        picture = SeamRemover.removeVerticalSeam(picture, seam);
+        updateAfterSeamRemoval();
     }
 
+    // Helper method to update the picture dimensions and energy matrix after seam removal
+    private void updateAfterSeamRemoval() {
+        // Update the dimensions
+        int newWidth = picture.width();
+        int newHeight = picture.height();
+        // Rebuild energy matrix based on new dimensions
+        energyMatrix = new double[newWidth][newHeight];
+        for (int i = 0; i < newWidth; i++) {
+            for (int j = 0; j < newHeight; j++) {
+                energyMatrix[i][j] = computeEnergy(i, j);
+            }
+        }
+    }
+
+    // Validate the seam to ensure proper indices and no illegal gaps between consecutive entries
     private void validateSeam(int[] seam, int expectedLength) {
         if (seam.length != expectedLength) {
             throw new IllegalArgumentException("Seam length must be " + expectedLength);
